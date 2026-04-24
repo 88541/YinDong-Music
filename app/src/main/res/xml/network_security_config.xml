@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    网络安全配置 — 防抓包加固
+    
+    功能:
+    1. 禁止信任用户安装的 CA 证书（防 Charles/Fiddler/mitmproxy 等抓包工具）
+    2. 仅信任系统预装 CA 证书
+    3. 全局禁止明文 HTTP，避免降级与中间人篡改
+    
+    注意:
+    - debug 模式下允许用户证书（方便开发调试）
+    - release 模式下仅信任系统证书
+-->
+<network-security-config>
+
+    <!--
+        默认配置：
+        - 禁止明文 HTTP，避免中间人降级/篡改
+        - 仅信任系统 CA 证书（防抓包核心：禁止用户安装的 Charles/Fiddler 证书）
+    -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    <!-- 音乐播放域名：按白名单放开明文（仅这些域名） -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- QQ 播放 CDN（常见: wx.music.tc.qq.com） -->
+        <domain includeSubdomains="true">qq.com</domain>
+        <domain includeSubdomains="true">qqmusic.qq.com</domain>
+        <!-- QQ音乐搜索API（CeruMusic方式） -->
+        <domain includeSubdomains="true">u.y.qq.com</domain>
+        <domain includeSubdomains="true">y.qq.com</domain>
+        <!-- 网易云 CDN -->
+        <domain includeSubdomains="true">music.126.net</domain>
+        <domain includeSubdomains="true">126.net</domain>
+        <!-- 酷狗 CDN -->
+        <domain includeSubdomains="true">kugou.com</domain>
+        <!-- 酷我 CDN -->
+        <domain includeSubdomains="true">kuwo.cn</domain>
+        <domain includeSubdomains="true">www.kuwo.cn</domain>
+        <!-- 咪咕 CDN -->
+        <domain includeSubdomains="true">migu.cn</domain>
+        <!-- 网易云API服务器 -->
+        <domain includeSubdomains="true">156.225.18.78</domain>
+        <!-- CeruMusic播放解析API -->
+        <domain includeSubdomains="true">ts.tempmusics.tk</domain>
+        <domain includeSubdomains="true">tm.tempmusics.tk</domain>
+        <!-- TuneHub V3 API -->
+        <domain includeSubdomains="true">tunehub.sayqz.com</domain>
+    </domain-config>
+
+    <!-- Debug 模式：额外允许用户证书（方便开发时抓包调试） -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+
+</network-security-config>

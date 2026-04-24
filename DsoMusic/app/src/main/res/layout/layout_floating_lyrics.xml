@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lyricsContainer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#CC000000">
+
+    <!-- 歌词显示区域（默认显示） -->
+    <LinearLayout
+        android:id="@+id/lyricsDisplayArea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvLyrics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="歌词"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:shadowColor="#000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/tvLyricsNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="下一句歌词"
+            android:textColor="#80FFFFFF"
+            android:textSize="14sp"
+            android:shadowColor="#000000"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+    </LinearLayout>
+
+    <!-- 功能控制区域（点击后显示） -->
+    <LinearLayout
+        android:id="@+id/controlPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="12dp"
+        android:visibility="gone"
+        android:background="#E6000000">
+
+        <!-- 顶部工具栏 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="悬浮歌词"
+                android:textColor="#00CED1"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <!-- 锁定按钮 -->
+            <ImageView
+                android:id="@+id/btnLock"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_lock_open"
+                android:background="@android:color/transparent"
+                android:contentDescription="锁定" />
+
+            <!-- 设置按钮 -->
+            <ImageView
+                android:id="@+id/btnSettings"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_settings"
+                android:background="@android:color/transparent"
+                android:contentDescription="设置" />
+
+            <!-- 关闭按钮 -->
+            <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_close"
+                android:background="@android:color/transparent"
+                android:contentDescription="关闭" />
+
+        </LinearLayout>
+
+        <!-- 播放控制栏 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <ImageView
+                android:id="@+id/btnPrevious"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_skip_previous"
+                android:background="@android:color/transparent"
+                android:contentDescription="上一首" />
+
+            <ImageView
+                android:id="@+id/btnPlayPause"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_play"
+                android:background="@android:color/transparent"
+                android:contentDescription="播放/暂停" />
+
+            <ImageView
+                android:id="@+id/btnNext"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_skip_next"
+                android:background="@android:color/transparent"
+                android:contentDescription="下一首" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

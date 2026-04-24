@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 标题栏 -->
+        <com.dirror.music.widget.TitleBarLayout
+            android:id="@+id/titleBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:text="MV播放"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 视频播放器 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/black">
+
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="加载失败"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- MV信息区域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@color/colorPageBackground">
+
+            <TextView
+                android:id="@+id/tvMVName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MV名称"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvArtistName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="歌手名称"
+                android:textColor="@color/colorSubTextForeground"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvMVDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="MV描述"
+                android:textColor="@color/colorSubTextForeground"
+                android:textSize="12sp"
+                android:maxLines="3"
+                android:ellipsize="end" />
+
+            <!-- 操作按钮 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <Button
+                    android:id="@+id/btnResolution"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="清晰度: 1080P"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/btnFullScreen"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_play"
+                    android:contentDescription="全屏" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 相关MV推荐 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            android:background="@color/colorPageBackground">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="相关MV"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRelatedMV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:overScrollMode="never" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

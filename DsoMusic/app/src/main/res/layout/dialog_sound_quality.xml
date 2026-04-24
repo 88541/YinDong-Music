@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_slide_layout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/defaultPadding"
+            android:paddingEnd="@dimen/defaultPadding"
+            android:text="选择音质"
+            android:textColor="@color/colorTextForeground"
+            android:textSize="@dimen/defaultTextSize"
+            android:textStyle="bold" />
+
+        <!-- 标准音质 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemStandard"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/defaultPadding"
+                android:text="标准音质"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="@dimen/defaultTextSize"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivStandardSelected"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/defaultPadding"
+                android:src="@drawable/ic_baseline_check_24"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/colorAppThemeColor" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 较高音质 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemExhigh"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/defaultPadding"
+                android:text="较高音质"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="@dimen/defaultTextSize"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivExhighSelected"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/defaultPadding"
+                android:src="@drawable/ic_baseline_check_24"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/colorAppThemeColor" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 无损音质 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemLossless"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/defaultPadding"
+                android:text="无损音质"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="@dimen/defaultTextSize"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivLosslessSelected"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/defaultPadding"
+                android:src="@drawable/ic_baseline_check_24"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/colorAppThemeColor" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Hi-Res音质 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemHires"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/defaultPadding"
+                android:text="Hi-Res音质"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="@dimen/defaultTextSize"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivHiresSelected"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/defaultPadding"
+                android:src="@drawable/ic_baseline_check_24"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/colorAppThemeColor" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 鲸云臻音 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemJymaster"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/defaultPadding"
+                android:text="鲸云臻音"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="@dimen/defaultTextSize"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivJymasterSelected"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/defaultPadding"
+                android:src="@drawable/ic_baseline_check_24"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/colorAppThemeColor" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

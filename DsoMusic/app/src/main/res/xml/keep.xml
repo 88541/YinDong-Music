@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_lock_open,@drawable/ic_lock,@drawable/ic_settings,@drawable/ic_close,@drawable/ic_skip_previous,@drawable/ic_play,@drawable/ic_skip_next,@drawable/ic_floating_lyrics" />

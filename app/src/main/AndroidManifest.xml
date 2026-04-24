@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.yindong.music">
+
+    <!-- ══ 网络 ══ -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- ══ 音频播放 / 前台服务 ══ -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- ══ 存储 (下载/插件导入) ══ -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />  <!-- Android 13+ -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- Android 13+ 封面 -->
+
+    <!-- ══ 蓝牙 ══ -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- Android 12+ -->
+
+    <!-- ══ 通知 / UI ══ -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />  <!-- 悬浮歌词 -->
+
+    <!-- ══ 其他 ══ -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- APK更新 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />  <!-- 开机自启 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />         <!-- 来电暂停 -->
+
+    <!-- Android 12+ attribution -->
+    <attribution android:tag="media_playback" android:label="@string/app_name" />
+
+    <application
+        android:name="com.yindong.music.CloudMusicApplication"
+        android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CloudMusic"
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:targetApi="34">
+        <activity
+            android:name="com.yindong.music.MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden|keyboard|navigation|density|screenLayout|smallestScreenSize|locale|layoutDirection|fontScale|uiMode"
+            android:theme="@style/Theme.CloudMusic">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- 支持从浏览器/文件管理器直接打开 .js 插件并自动导入 -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="application/javascript" />
+                <data android:mimeType="text/javascript" />
+                <data android:mimeType="application/x-javascript" />
+            </intent-filter>
+
+            <!-- 支持从其他App“分享” .js 到本应用 -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/javascript" />
+                <data android:mimeType="text/javascript" />
+                <data android:mimeType="application/x-javascript" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/javascript" />
+                <data android:mimeType="text/javascript" />
+                <data android:mimeType="application/x-javascript" />
+            </intent-filter>
+        </activity>
+
+        <!-- 媒体播放前台服务：通知栏/锁屏/灵动岛媒体控制 -->
+        <service
+            android:name="com.yindong.music.MusicPlaybackService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true"
+            android:permission="android.permission.MEDIA_CONTENT_CONTROL">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
+        <!-- 悬浮歌词服务：在其他App上方显示当前歌词 -->
+        <service
+            android:name="com.yindong.music.FloatingLyricsService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse" />
+
+        <!-- APK更新安装所需的 FileProvider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+</manifest>

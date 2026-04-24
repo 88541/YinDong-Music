@@ -1,0 +1,2163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐搜索播放器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft Yahei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: #fff;
+            padding-bottom: 120px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .search-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #search-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .search-options select, .search-options input {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            outline: none;
+        }
+
+        .results-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .results-count {
+            font-size: 1.1rem;
+            color: #feb47b;
+        }
+
+        .song-list {
+            list-style: none;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .song-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .song-item.active {
+            background: rgba(254, 180, 123, 0.2);
+            border-left: 4px solid #feb47b;
+        }
+
+        .song-info {
+            flex: 1;
+        }
+
+        .song-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .song-artist, .song-album {
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .song-duration {
+            color: #ccc;
+            margin-right: 20px;
+        }
+
+        /* 下载按钮组 */
+        .song-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .download-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 15px;
+            background: #4CAF50;
+            color: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            background: #388E3C;
+        }
+
+        .download-select {
+            padding: 6px 8px;
+            border-radius: 15px;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            outline: none;
+            font-size: 0.8rem;
+        }
+
+        .player-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 60, 114, 0.95);
+            padding: 15px 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .player-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .audio-player {
+            width: 100%;
+            outline: none;
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .current-song-info {
+            font-size: 1rem;
+        }
+
+        .quality-selector select {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            outline: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #ccc;
+            display: none;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: #ccc;
+            display: none;
+        }
+
+        /* 音质可用性标记 */
+        .quality-note {
+            font-size: 0.75rem;
+            color: #ff9800;
+            margin-left: 5px;
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* 歌词按钮 */
+        .lyric-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 15px;
+            background: #2196F3;
+            color: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 5px;
+        }
+
+        .lyric-btn:hover {
+            background: #1976D2;
+        }
+
+        /* 歌词弹窗 */
+        .lyric-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .lyric-modal.show {
+            display: flex;
+        }
+
+        .lyric-container {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .lyric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .lyric-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .lyric-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .lyric-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lyric-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lyric-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .lyric-tab.active {
+            color: #feb47b;
+            border-bottom-color: #feb47b;
+        }
+
+        .lyric-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            text-align: center;
+            line-height: 2;
+            font-size: 1rem;
+            color: #ddd;
+        }
+
+        .lyric-content p {
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+
+        .lyric-content p.active {
+            color: #feb47b;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .lyric-loading {
+            text-align: center;
+            padding: 50px;
+            color: #ccc;
+        }
+
+        .lyric-empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+        }
+
+        /* 导航菜单 */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+        }
+
+        /* 内容区域 */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* 歌单卡片 */
+        .playlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .playlist-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .playlist-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .playlist-cover {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+
+        .playlist-info {
+            padding: 12px;
+        }
+
+        .playlist-name {
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .playlist-count {
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        /* 排行榜 */
+        .toplist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .toplist-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toplist-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .toplist-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .toplist-cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .toplist-meta {
+            flex: 1;
+        }
+
+        .toplist-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .toplist-update {
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        .toplist-tracks {
+            font-size: 0.85rem;
+            color: #ddd;
+        }
+
+        .toplist-tracks li {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* MV卡片 */
+        .mv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .mv-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mv-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .mv-cover {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .mv-duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .mv-info {
+            padding: 12px;
+        }
+
+        .mv-name {
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .mv-artist {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        .mv-play-count {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* 歌手榜 */
+        .artist-rank-list {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .artist-rank-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .artist-rank-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .artist-rank {
+            width: 40px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #feb47b;
+        }
+
+        .artist-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 15px;
+        }
+
+        .artist-info {
+            flex: 1;
+        }
+
+        .artist-name {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .artist-score {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        /* 分类筛选 */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            outline: none;
+        }
+
+        /* 评论按钮 */
+        .comment-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 15px;
+            background: #9C27B0;
+            color: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 5px;
+        }
+
+        .comment-btn:hover {
+            background: #7B1FA2;
+        }
+
+        /* 评论弹窗 */
+        .comment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .comment-modal.show {
+            display: flex;
+        }
+
+        .comment-container {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .comment-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .comment-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .comment-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .comment-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comment-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .comment-tab.active {
+            color: #feb47b;
+            border-bottom-color: #feb47b;
+        }
+
+        .comment-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .comment-body {
+            flex: 1;
+        }
+
+        .comment-user {
+            font-weight: bold;
+            color: #feb47b;
+            margin-bottom: 5px;
+        }
+
+        .comment-text {
+            color: #ddd;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .comment-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .comment-likes {
+            color: #ff6b6b;
+        }
+
+        .comment-loading {
+            text-align: center;
+            padding: 50px;
+            color: #ccc;
+        }
+
+        .comment-empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+        }
+
+        .comment-load-more {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .comment-load-more button {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .comment-load-more button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 歌曲封面 */
+        .song-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        /* 播放器封面 */
+        .player-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+            .player-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .song-item {
+                flex-wrap: wrap;
+            }
+            .song-actions {
+                width: 100%;
+                margin-top: 10px;
+                justify-content: flex-end;
+            }
+            .song-cover {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>音乐搜索播放器</h1>
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="输入歌曲名、歌手名搜索..." autocomplete="off">
+            <button id="search-btn">搜索</button>
+        </div>
+        <div class="search-options">
+            <select id="search-type">
+                <option value="1">单曲</option>
+                <option value="10">专辑</option>
+                <option value="100">歌手</option>
+                <option value="1000">歌单</option>
+                <option value="1018">综合</option>
+            </select>
+            <select id="result-limit">
+                <option value="10">显示10条</option>
+                <option value="20" selected>显示20条</option>
+                <option value="30">显示30条</option>
+            </select>
+        </div>
+
+        <!-- 导航菜单 -->
+        <div class="nav-menu">
+            <button class="nav-btn active" data-section="search">搜索</button>
+            <button class="nav-btn" data-section="playlist">精品歌单</button>
+            <button class="nav-btn" data-section="toplist">排行榜</button>
+            <button class="nav-btn" data-section="recommend">每日推荐</button>
+            <button class="nav-btn" data-section="mv">MV</button>
+            <button class="nav-btn" data-section="artist-rank">歌手榜</button>
+        </div>
+    </header>
+
+    <!-- 搜索区域 -->
+    <div class="content-section active" id="section-search">
+        <div class="results-container">
+            <div class="results-header">
+                <h2>搜索结果</h2>
+                <div class="results-count">共 <span id="total-count">0</span> 首歌曲</div>
+            </div>
+            <div class="loading">正在搜索，请稍候...</div>
+            <div class="no-results">未找到相关歌曲</div>
+            <ul class="song-list" id="song-list"></ul>
+        </div>
+    </div>
+
+    <!-- 精品歌单区域 -->
+    <div class="content-section" id="section-playlist">
+        <div class="results-container">
+            <div class="results-header">
+                <h2>精品歌单</h2>
+            </div>
+            <div class="filter-bar">
+                <select class="filter-select" id="playlist-cat">
+                    <option value="">全部</option>
+                    <option value="华语">华语</option>
+                    <option value="流行">流行</option>
+                    <option value="摇滚">摇滚</option>
+                    <option value="民谣">民谣</option>
+                    <option value="电子">电子</option>
+                    <option value="轻音乐">轻音乐</option>
+                </select>
+            </div>
+            <div class="playlist-grid" id="playlist-grid"></div>
+        </div>
+    </div>
+
+    <!-- 排行榜区域 -->
+    <div class="content-section" id="section-toplist">
+        <div class="results-container">
+            <div class="results-header">
+                <h2>排行榜</h2>
+            </div>
+            <div class="toplist-grid" id="toplist-grid"></div>
+        </div>
+    </div>
+
+    <!-- 每日推荐区域 -->
+    <div class="content-section" id="section-recommend">
+        <div class="results-container">
+            <div class="results-header">
+                <h2>每日推荐</h2>
+            </div>
+            <div class="nav-menu" style="margin-bottom: 20px;">
+                <button class="nav-btn active" data-recommend="songs">推荐歌曲</button>
+                <button class="nav-btn" data-recommend="resource">推荐歌单</button>
+                <button class="nav-btn" data-recommend="fm">私人FM</button>
+            </div>
+            <div id="recommend-content">
+                <ul class="song-list" id="recommend-songs-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- MV区域 -->
+    <div class="content-section" id="section-mv">
+        <div class="results-container">
+            <div class="results-header">
+                <h2>MV推荐</h2>
+            </div>
+            <div class="filter-bar">
+                <select class="filter-select" id="mv-area">
+                    <option value="">全部地区</option>
+                    <option value="内地">内地</option>
+                    <option value="港台">港台</option>
+                    <option value="欧美">欧美</option>
+                    <option value="日本">日本</option>
+                    <option value="韩国">韩国</option>
+                </select>
+                <select class="filter-select" id="mv-order">
+                    <option value="最热">最热</option>
+                    <option value="最新">最新</option>
+                    <option value="上升最快">上升最快</option>
+                </select>
+            </div>
+            <div class="mv-grid" id="mv-grid"></div>
+        </div>
+    </div>
+
+    <!-- 歌手榜区域 -->
+    <div class="content-section" id="section-artist-rank">
+        <div class="results-container">
+            <div class="results-header">
+                <h2>歌手榜</h2>
+            </div>
+            <div class="artist-rank-list" id="artist-rank-list"></div>
+        </div>
+    </div>
+</div>
+
+<div class="player-container">
+    <div class="player-content">
+        <div class="player-controls">
+            <div class="current-song-info">未选择歌曲</div>
+            <div class="quality-selector">
+                <select id="quality-select">
+                    <option value="standard">标准音质 (128kbps MP3) ✅</option>
+                    <option value="exhigh" selected>极高音质 (320kbps MP3) ✅</option>
+                    <option value="lossless">无损音质 (FLAC) ✅</option>
+                    <option value="hires">Hi-Res 音质 (96kHz/24bit) ⚠️</option>
+                    <option value="jymaster">超清母带 (192kHz/24bit) ⚠️</option>
+                    <option value="sky">沉浸环绕声 ⚠️</option>
+                    <option value="jyeffect">高清环绕声 ⚠️</option>
+                </select>
+            </div>
+        </div>
+        <audio id="audio-player" class="audio-player" controls>
+    </div>
+</div>
+
+<!-- 歌词弹窗 -->
+<div class="lyric-modal" id="lyric-modal">
+    <div class="lyric-container">
+        <div class="lyric-header">
+            <div class="lyric-title" id="lyric-song-title">歌曲歌词</div>
+            <button class="lyric-close" id="lyric-close">&times;</button>
+        </div>
+        <div class="lyric-tabs">
+            <button class="lyric-tab active" data-tab="lrc">原歌词</button>
+            <button class="lyric-tab" data-tab="tlyric">翻译歌词</button>
+        </div>
+        <div class="lyric-content" id="lyric-content">
+            <div class="lyric-loading">正在加载歌词...</div>
+        </div>
+    </div>
+</div>
+
+<!-- 评论弹窗 -->
+<div class="comment-modal" id="comment-modal">
+    <div class="comment-container">
+        <div class="comment-header">
+            <div class="comment-title" id="comment-song-title">歌曲评论</div>
+            <button class="comment-close" id="comment-close">&times;</button>
+        </div>
+        <div class="comment-tabs">
+            <button class="comment-tab active" data-tab="hot">热门评论</button>
+            <button class="comment-tab" data-tab="new">最新评论</button>
+        </div>
+        <div class="comment-content" id="comment-content">
+            <div class="comment-loading">正在加载评论...</div>
+        </div>
+    </div>
+</div>
+
+<!-- MV播放弹窗 -->
+<div class="lyric-modal" id="mv-modal">
+    <div class="lyric-container" style="max-width: 900px;">
+        <div class="lyric-header">
+            <div class="lyric-title" id="mv-title">MV播放</div>
+            <button class="lyric-close" id="mv-close">&times;</button>
+        </div>
+        <div class="lyric-content" id="mv-content" style="padding: 0; background: #000;">
+            <div class="lyric-loading">正在加载MV...</div>
+        </div>
+    </div>
+</div>
+
+<!-- 歌单详情弹窗 -->
+<div class="lyric-modal" id="playlist-modal">
+    <div class="lyric-container" style="max-width: 800px;">
+        <div class="lyric-header">
+            <div class="lyric-title" id="playlist-modal-title">歌单详情</div>
+            <button class="lyric-close" id="playlist-modal-close">&times;</button>
+        </div>
+        <div class="lyric-content" id="playlist-modal-content">
+            <div class="lyric-loading">正在加载歌单...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    const searchType = document.getElementById('search-type');
+    const resultLimit = document.getElementById('result-limit');
+    const songList = document.getElementById('song-list');
+    const totalCount = document.getElementById('total-count');
+    const loading = document.querySelector('.loading');
+    const noResults = document.querySelector('.no-results');
+    const audioPlayer = document.getElementById('audio-player');
+    const currentSongInfo = document.querySelector('.current-song-info');
+    const qualitySelect = document.getElementById('quality-select');
+    const lyricModal = document.getElementById('lyric-modal');
+    const lyricClose = document.getElementById('lyric-close');
+    const lyricContent = document.getElementById('lyric-content');
+    const lyricSongTitle = document.getElementById('lyric-song-title');
+    const lyricTabs = document.querySelectorAll('.lyric-tab');
+    const commentModal = document.getElementById('comment-modal');
+    const commentClose = document.getElementById('comment-close');
+    const commentContent = document.getElementById('comment-content');
+    const commentSongTitle = document.getElementById('comment-song-title');
+    const commentTabs = document.querySelectorAll('.comment-tab');
+
+    let currentSongId = null;
+    let currentLyricData = null;
+    let currentLyricType = 'lrc';
+    let currentCommentSongId = null;
+    let currentCommentType = 'hot';
+    let commentOffset = 0;
+    let commentTotal = 0;
+    let isLoadingComments = false;
+
+    // 新功能相关变量
+    const navBtns = document.querySelectorAll('.nav-btn[data-section]');
+    const contentSections = document.querySelectorAll('.content-section');
+    const playlistGrid = document.getElementById('playlist-grid');
+    const toplistGrid = document.getElementById('toplist-grid');
+    const mvGrid = document.getElementById('mv-grid');
+    const artistRankList = document.getElementById('artist-rank-list');
+    const recommendSongsList = document.getElementById('recommend-songs-list');
+    const playlistCat = document.getElementById('playlist-cat');
+    const mvArea = document.getElementById('mv-area');
+    const mvOrder = document.getElementById('mv-order');
+    const mvModal = document.getElementById('mv-modal');
+    const mvClose = document.getElementById('mv-close');
+    const mvContent = document.getElementById('mv-content');
+    const mvTitle = document.getElementById('mv-title');
+    const playlistModal = document.getElementById('playlist-modal');
+    const playlistModalClose = document.getElementById('playlist-modal-close');
+    const playlistModalContent = document.getElementById('playlist-modal-content');
+    const playlistModalTitle = document.getElementById('playlist-modal-title');
+    let currentRecommendType = 'songs';
+
+    // 格式化时长
+    function formatDuration(ms) {
+        const minutes = Math.floor(ms / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // 获取音质对应的文件扩展名
+    function getFileExtensionByQuality(level) {
+        switch(level) {
+            case 'standard':
+            case 'exhigh':
+                return 'mp3';
+            case 'lossless':
+            case 'hires':
+            case 'jymaster':
+            case 'sky':
+            case 'jyeffect':
+                return 'flac';
+            default:
+                return 'mp3';
+        }
+    }
+
+    // 获取音质显示名称
+    function getQualityDisplayName(level) {
+        const qualityMap = {
+            'standard': '标准音质 (128kbps MP3)',
+            'exhigh': '极高音质 (320kbps MP3)',
+            'lossless': '无损音质 (FLAC)',
+            'hires': 'Hi-Res 音质 (96kHz/24bit)',
+            'jymaster': '超清母带 (192kHz/24bit)',
+            'sky': '沉浸环绕声',
+            'jyeffect': '高清环绕声'
+        };
+        return qualityMap[level] || level;
+    }
+
+    // 获取音质可用性提示
+    function getQualityAvailability(level) {
+        const availabilityMap = {
+            'standard': '✅ 全部歌曲可用',
+            'exhigh': '✅ 全部歌曲可用',
+            'lossless': '✅ VIP歌曲可用',
+            'hires': '⚠️ 部分歌曲可用',
+            'jymaster': '⚠️ 部分歌曲支持',
+            'sky': '⚠️ 部分歌曲支持',
+            'jyeffect': '⚠️ 部分歌曲支持'
+        };
+        return availabilityMap[level] || '';
+    }
+
+    // 下载歌曲（带音质选择）
+    async function downloadSong(songId, songName, downloadLevel) {
+        try {
+            // 显示下载提示（包含可用性说明）
+            const qualityName = getQualityDisplayName(downloadLevel);
+            const availability = getQualityAvailability(downloadLevel);
+            alert(`开始下载：${songName} - ${qualityName}\n${availability}`);
+            
+            // 构建请求URL（sky音质需要添加immerseType参数）
+            let url = `http://156.225.18.78:3000/song/url/v1?id=${songId}&level=${downloadLevel}`;
+            if (downloadLevel === 'sky') {
+                url += '&immerseType=c51'; // 沉浸环绕声需要的参数
+            }
+            
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.code === 200 && data.data && data.data[0] && data.data[0].url) {
+                const dLink = data.data[0].url;
+                const ext = getFileExtensionByQuality(downloadLevel);
+                const a = document.createElement('a');
+                a.href = dLink;
+                a.download = `${songName}_${downloadLevel}.${ext}`; // 文件名包含音质标识
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // 高级音质额外提示
+                if (['jymaster', 'hires', 'sky', 'jyeffect'].includes(downloadLevel)) {
+                    setTimeout(() => {
+                        alert(`${qualityName}下载已开始！\n提示：该音质文件较大，建议在WiFi环境下下载，需要专业设备体验最佳效果`);
+                    }, 1000);
+                }
+            } else {
+                // 降级提示
+                const fallbackLevels = {
+                    'jymaster': 'hires',
+                    'hires': 'lossless',
+                    'sky': 'exhigh',
+                    'jyeffect': 'exhigh'
+                };
+                
+                if (fallbackLevels[downloadLevel]) {
+                    const fallback = fallbackLevels[downloadLevel];
+                    if (confirm(`获取${qualityName}失败！是否自动降级为${getQualityDisplayName(fallback)}下载？`)) {
+                        downloadSong(songId, songName, fallback);
+                    }
+                } else {
+                    alert('获取下载链接失败，请尝试切换其他音质');
+                }
+            }
+        } catch (err) {
+            console.error('下载失败', err);
+            alert('下载失败，请重试：' + err.message);
+        }
+    }
+
+    // 搜索歌曲
+    async function searchSongs() {
+        const keywords = searchInput.value.trim();
+        if (!keywords) {
+            alert('请输入搜索关键词');
+            return;
+        }
+
+        loading.style.display = 'block';
+        noResults.style.display = 'none';
+        songList.innerHTML = '';
+
+        try {
+            const url = `http://156.225.18.78:3000/search?keywords=${encodeURIComponent(keywords)}&type=${searchType.value}&limit=${resultLimit.value}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            loading.style.display = 'none';
+
+            if (data.code === 200 && data.result?.songs?.length) {
+                totalCount.textContent = data.result.songCount || data.result.songs.length;
+                data.result.songs.forEach((song, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'song-item';
+                    li.dataset.songId = song.id;
+                    const artists = song.artists.map(a => a.name).join(' / ');
+
+                    // 获取封面URL - 搜索接口返回的album中只有picId，需要通过song/detail获取完整信息
+                    // 先尝试获取可能存在的picUrl
+                    let coverUrl = song.album?.picUrl || song.al?.picUrl;
+                    
+                    // 如果没有picUrl，使用默认封面，然后通过song/detail接口获取真实封面
+                    if (!coverUrl) {
+                        coverUrl = 'https://p2.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
+                        // 异步获取真实封面
+                        fetchSongCover(song.id, li);
+                    }
+
+                    li.innerHTML = `
+                        <img class="song-cover" src="${coverUrl}" alt="${song.name}">
+                        <div class="song-info">
+                            <div class="song-name">${song.name}</div>
+                            <div class="song-artist">歌手: ${artists}</div>
+                            <div class="song-album">专辑: ${song.album.name}</div>
+                        </div>
+                        <div class="song-duration">${formatDuration(song.duration)}</div>
+                        <div class="song-actions">
+                            <select class="download-select" data-song-id="${song.id}">
+                                <option value="standard">标准 (128kbps) ✅</option>
+                                <option value="exhigh">极高 (320kbps) ✅</option>
+                                <option value="lossless">无损 (FLAC) ✅</option>
+                                <option value="hires">Hi-Res (96kHz) ⚠️</option>
+                                <option value="jymaster">超清母带 (192kHz) ⚠️</option>
+                                <option value="sky">沉浸环绕声 ⚠️</option>
+                                <option value="jyeffect">高清环绕声 ⚠️</option>
+                            </select>
+                            <button class="download-btn" data-song-id="${song.id}" data-song-name="${song.name}">下载</button>
+                            <button class="lyric-btn" data-song-id="${song.id}" data-song-name="${song.name}">歌词</button>
+                            <button class="comment-btn" data-song-id="${song.id}" data-song-name="${song.name}">评论</button>
+                        </div>
+                    `;
+
+                    // 播放点击
+                    li.addEventListener('click', (e) => {
+                        if (!e.target.closest('.song-actions')) {
+                            document.querySelectorAll('.song-item').forEach(i => i.classList.remove('active'));
+                            li.classList.add('active');
+                            playSong(song.id, song.name, artists, coverUrl);
+                        }
+                    });
+
+                    songList.appendChild(li);
+                });
+
+                // 绑定下载按钮事件
+                document.querySelectorAll('.download-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const songId = btn.dataset.songId;
+                        const songName = btn.dataset.songName;
+                        const select = document.querySelector(`.download-select[data-song-id="${songId}"]`);
+                        const level = select.value;
+                        await downloadSong(songId, songName, level);
+                    });
+                });
+
+                // 绑定歌词按钮事件
+                document.querySelectorAll('.lyric-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const songId = btn.dataset.songId;
+                        const songName = btn.dataset.songName;
+                        await showLyric(songId, songName);
+                    });
+                });
+
+                // 绑定评论按钮事件
+                document.querySelectorAll('.comment-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const songId = btn.dataset.songId;
+                        const songName = btn.dataset.songName;
+                        await showComments(songId, songName);
+                    });
+                });
+
+            } else {
+                noResults.style.display = 'block';
+                totalCount.textContent = 0;
+            }
+        } catch (error) {
+            loading.style.display = 'none';
+            alert('搜索失败：' + error.message);
+            console.error(error);
+        }
+    }
+
+    // 当前播放歌曲封面
+    let currentSongCover = null;
+
+    // 获取歌曲真实封面
+    async function fetchSongCover(songId, songItemElement) {
+        try {
+            const response = await fetch(`http://156.225.18.78:3000/song/detail?ids=${songId}`);
+            const data = await response.json();
+            
+            if (data.code === 200 && data.songs && data.songs[0]) {
+                const song = data.songs[0];
+                const coverUrl = song.al?.picUrl || song.album?.picUrl;
+                
+                if (coverUrl) {
+                    const coverImg = songItemElement.querySelector('.song-cover');
+                    if (coverImg) {
+                        coverImg.src = coverUrl + '?param=130y130';
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('获取封面失败:', error);
+        }
+    }
+
+    // 播放歌曲
+    async function playSong(songId, songName, artistName, coverUrl) {
+        if (currentSongId === songId) {
+            audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
+            return;
+        }
+        currentSongId = songId;
+        currentSongCover = coverUrl;
+
+        try {
+            const quality = qualitySelect.value;
+            // 构建请求URL（sky音质需要添加immerseType参数）
+            let url = `http://156.225.18.78:3000/song/url/v1?id=${songId}&level=${quality}`;
+            if (quality === 'sky') {
+                url += '&immerseType=c51'; // 沉浸环绕声需要的参数
+            }
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.code === 200 && data.data?.[0]?.url) {
+                audioPlayer.src = data.data[0].url;
+                audioPlayer.play();
+
+                // 更新播放信息（包含音质和可用性）
+                const qualityName = getQualityDisplayName(quality);
+                const availability = getQualityAvailability(quality);
+
+                // 显示封面和歌曲信息
+                const coverHtml = coverUrl ? `<img src="${coverUrl}" class="player-cover" alt="cover">` : '';
+                currentSongInfo.innerHTML = `${coverHtml}<span>${songName} - ${artistName} [${qualityName}]</span>`;
+
+                // 高级音质播放提示
+                if (['jymaster', 'hires', 'sky', 'jyeffect'].includes(quality)) {
+                    setTimeout(() => {
+                        alert(`${qualityName}\n${availability}\n提示：该音质文件较大，加载可能需要一些时间，建议使用专业音频设备播放以获得最佳效果`);
+                    }, 500);
+                }
+            } else {
+                // 自动降级逻辑
+                const fallbackLevels = {
+                    'jymaster': 'hires',
+                    'hires': 'lossless',
+                    'sky': 'exhigh',
+                    'jyeffect': 'exhigh'
+                };
+
+                if (fallbackLevels[quality]) {
+                    const fallback = fallbackLevels[quality];
+                    if (confirm(`获取${getQualityDisplayName(quality)}播放链接失败！是否自动降级为${getQualityDisplayName(fallback)}播放？`)) {
+                        qualitySelect.value = fallback;
+                        playSong(songId, songName, artistName, coverUrl);
+                    } else {
+                        currentSongId = null;
+                    }
+                } else {
+                    alert('无法获取播放链接，请尝试切换其他音质');
+                    currentSongId = null;
+                }
+            }
+        } catch (error) {
+            alert('播放失败：' + error.message);
+            currentSongId = null;
+        }
+    }
+
+    // 播放音质切换
+    qualitySelect.addEventListener('change', () => {
+        if (!currentSongId) return;
+        const active = document.querySelector('.song-item.active');
+        if (active) {
+            const name = active.querySelector('.song-name').textContent;
+            const artist = active.querySelector('.song-artist').textContent.replace('歌手: ', '');
+            playSong(currentSongId, name, artist, currentSongCover);
+        }
+    });
+
+    // 解析LRC歌词格式
+    function parseLyric(lrcText) {
+        if (!lrcText) return [];
+        const lines = lrcText.split('\n');
+        const lyrics = [];
+        const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+
+        lines.forEach(line => {
+            const match = line.match(timeRegex);
+            if (match) {
+                const minutes = parseInt(match[1]);
+                const seconds = parseInt(match[2]);
+                const milliseconds = parseInt(match[3].padEnd(3, '0'));
+                const time = minutes * 60 + seconds + milliseconds / 1000;
+                const text = match[4].trim();
+                if (text) {
+                    lyrics.push({ time, text });
+                }
+            }
+        });
+
+        return lyrics.sort((a, b) => a.time - b.time);
+    }
+
+    // 显示歌词
+    async function showLyric(songId, songName) {
+        lyricSongTitle.textContent = `${songName} - 歌词`;
+        lyricModal.classList.add('show');
+        lyricContent.innerHTML = '<div class="lyric-loading">正在加载歌词...</div>';
+        currentLyricData = null;
+
+        try {
+            const response = await fetch(`http://156.225.18.78:3000/lyric?id=${songId}`);
+            const data = await response.json();
+
+            if (data.code === 200) {
+                currentLyricData = {
+                    lrc: data.lrc?.lyric || '',
+                    tlyric: data.tlyric?.lyric || '',
+                    klyric: data.klyric?.lyric || ''
+                };
+                renderLyric();
+            } else {
+                lyricContent.innerHTML = '<div class="lyric-empty">获取歌词失败</div>';
+            }
+        } catch (error) {
+            lyricContent.innerHTML = '<div class="lyric-empty">加载歌词出错：' + error.message + '</div>';
+        }
+    }
+
+    // 渲染歌词
+    function renderLyric() {
+        if (!currentLyricData) return;
+
+        const lyricText = currentLyricType === 'tlyric' ? currentLyricData.tlyric : currentLyricData.lrc;
+
+        if (!lyricText) {
+            lyricContent.innerHTML = `<div class="lyric-empty">暂无${currentLyricType === 'tlyric' ? '翻译' : ''}歌词</div>`;
+            return;
+        }
+
+        const lyrics = parseLyric(lyricText);
+
+        if (lyrics.length === 0) {
+            lyricContent.innerHTML = '<div class="lyric-empty">歌词解析失败</div>';
+            return;
+        }
+
+        lyricContent.innerHTML = lyrics.map(item => `<p>${escapeHtml(item.text)}</p>`).join('');
+    }
+
+    // HTML转义
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // 歌词标签切换
+    lyricTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            lyricTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentLyricType = tab.dataset.tab;
+            renderLyric();
+        });
+    });
+
+    // 关闭歌词弹窗
+    lyricClose.addEventListener('click', () => {
+        lyricModal.classList.remove('show');
+    });
+
+    // 点击弹窗背景关闭
+    lyricModal.addEventListener('click', (e) => {
+        if (e.target === lyricModal) {
+            lyricModal.classList.remove('show');
+        }
+    });
+
+    // 格式化时间戳
+    function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        if (days === 0) {
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            if (hours === 0) {
+                const minutes = Math.floor(diff / (1000 * 60));
+                return minutes === 0 ? '刚刚' : `${minutes}分钟前`;
+            }
+            return `${hours}小时前`;
+        } else if (days < 30) {
+            return `${days}天前`;
+        } else if (days < 365) {
+            return `${Math.floor(days / 30)}个月前`;
+        } else {
+            return `${Math.floor(days / 365)}年前`;
+        }
+    }
+
+    // 渲染评论列表
+    function renderComments(comments, append = false) {
+        if (!comments || comments.length === 0) {
+            if (!append) {
+                commentContent.innerHTML = '<div class="comment-empty">暂无评论</div>';
+            }
+            return;
+        }
+
+        const commentsHtml = comments.map(comment => `
+            <div class="comment-item">
+                <img class="comment-avatar" src="${comment.user.avatarUrl || 'https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg'}" alt="${escapeHtml(comment.user.nickname)}">
+                <div class="comment-body">
+                    <div class="comment-user">${escapeHtml(comment.user.nickname)}</div>
+                    <div class="comment-text">${escapeHtml(comment.content)}</div>
+                    <div class="comment-meta">
+                        <span class="comment-likes">❤ ${comment.likedCount || 0}</span>
+                        <span>${formatTime(comment.time)}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        if (append) {
+            // 移除加载更多按钮
+            const loadMoreBtn = commentContent.querySelector('.comment-load-more');
+            if (loadMoreBtn) loadMoreBtn.remove();
+            commentContent.insertAdjacentHTML('beforeend', commentsHtml);
+        } else {
+            commentContent.innerHTML = commentsHtml;
+        }
+
+        // 添加加载更多按钮
+        if (commentOffset < commentTotal && currentCommentType === 'new') {
+            const hasMore = commentContent.querySelector('.comment-load-more') === null;
+            if (hasMore) {
+                commentContent.insertAdjacentHTML('beforeend', `
+                    <div class="comment-load-more">
+                        <button onclick="loadMoreComments()">加载更多评论</button>
+                    </div>
+                `);
+            }
+        }
+    }
+
+    // 显示评论
+    async function showComments(songId, songName) {
+        currentCommentSongId = songId;
+        commentOffset = 0;
+        commentTotal = 0;
+        commentSongTitle.textContent = `${songName} - 评论`;
+        commentModal.classList.add('show');
+        commentContent.innerHTML = '<div class="comment-loading">正在加载评论...</div>';
+
+        await loadComments();
+    }
+
+    // 加载评论
+    async function loadComments() {
+        if (isLoadingComments || !currentCommentSongId) return;
+        isLoadingComments = true;
+
+        try {
+            let url;
+            if (currentCommentType === 'hot') {
+                url = `http://156.225.18.78:3000/comment/hot?id=${currentCommentSongId}&type=0&limit=20`;
+            } else {
+                url = `http://156.225.18.78:3000/comment/music?id=${currentCommentSongId}&limit=20&offset=${commentOffset}`;
+            }
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.code === 200) {
+                const comments = currentCommentType === 'hot' ? data.hotComments : data.comments;
+                commentTotal = data.total || 0;
+
+                if (commentOffset === 0) {
+                    renderComments(comments, false);
+                } else {
+                    renderComments(comments, true);
+                }
+            } else {
+                if (commentOffset === 0) {
+                    commentContent.innerHTML = '<div class="comment-empty">获取评论失败</div>';
+                }
+            }
+        } catch (error) {
+            if (commentOffset === 0) {
+                commentContent.innerHTML = '<div class="comment-empty">加载评论出错：' + error.message + '</div>';
+            }
+        } finally {
+            isLoadingComments = false;
+        }
+    }
+
+    // 加载更多评论
+    window.loadMoreComments = async function() {
+        if (isLoadingComments) return;
+        commentOffset += 20;
+        await loadComments();
+    };
+
+    // 评论标签切换
+    commentTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            commentTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentCommentType = tab.dataset.tab;
+            commentOffset = 0;
+            commentContent.innerHTML = '<div class="comment-loading">正在加载评论...</div>';
+            loadComments();
+        });
+    });
+
+    // 关闭评论弹窗
+    commentClose.addEventListener('click', () => {
+        commentModal.classList.remove('show');
+    });
+
+    // 点击弹窗背景关闭
+    commentModal.addEventListener('click', (e) => {
+        if (e.target === commentModal) {
+            commentModal.classList.remove('show');
+        }
+    });
+
+    // ==================== 新功能：导航切换 ====================
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const section = btn.dataset.section;
+            if (!section) return;
+
+            navBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            contentSections.forEach(s => s.classList.remove('active'));
+            document.getElementById(`section-${section}`).classList.add('active');
+
+            // 加载对应数据
+            if (section === 'playlist') loadHighQualityPlaylists();
+            else if (section === 'toplist') loadToplists();
+            else if (section === 'recommend') loadRecommendSongs();
+            else if (section === 'mv') loadMVs();
+            else if (section === 'artist-rank') loadArtistRanks();
+        });
+    });
+
+    // ==================== 精品歌单功能 ====================
+    async function loadHighQualityPlaylists() {
+        if (playlistGrid.children.length > 0) return;
+
+        playlistGrid.innerHTML = '<div class="lyric-loading" style="grid-column: 1/-1;">正在加载歌单...</div>';
+
+        try {
+            const cat = playlistCat.value;
+            const url = cat
+                ? `http://156.225.18.78:3000/top/playlist/highquality?cat=${encodeURIComponent(cat)}&limit=30`
+                : 'http://156.225.18.78:3000/top/playlist/highquality?limit=30';
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.code === 200 && data.playlists) {
+                renderPlaylists(data.playlists);
+            } else {
+                playlistGrid.innerHTML = '<div class="lyric-empty" style="grid-column: 1/-1;">暂无歌单</div>';
+            }
+        } catch (error) {
+            playlistGrid.innerHTML = '<div class="lyric-empty" style="grid-column: 1/-1;">加载失败：' + error.message + '</div>';
+        }
+    }
+
+    function renderPlaylists(playlists) {
+        playlistGrid.innerHTML = playlists.map(pl => `
+            <div class="playlist-card" data-id="${pl.id}">
+                <img class="playlist-cover" src="${pl.coverImgUrl || ''}" alt="${escapeHtml(pl.name)}">
+                <div class="playlist-info">
+                    <div class="playlist-name">${escapeHtml(pl.name)}</div>
+                    <div class="playlist-count">${pl.trackCount || 0}首</div>
+                </div>
+            </div>
+        `).join('');
+
+        playlistGrid.querySelectorAll('.playlist-card').forEach(card => {
+            card.addEventListener('click', () => showPlaylistDetail(card.dataset.id));
+        });
+    }
+
+    playlistCat.addEventListener('change', loadHighQualityPlaylists);
+
+    // ==================== 歌单详情 ====================
+    async function showPlaylistDetail(playlistId) {
+        playlistModal.classList.add('show');
+        playlistModalContent.innerHTML = '<div class="lyric-loading">正在加载歌单...</div>';
+
+        try {
+            const response = await fetch(`http://156.225.18.78:3000/playlist/detail?id=${playlistId}`);
+            const data = await response.json();
+
+            if (data.code === 200 && data.playlist) {
+                const pl = data.playlist;
+                playlistModalTitle.textContent = pl.name;
+
+                const tracksHtml = pl.tracks.map((track, index) => {
+                    const artists = track.ar.map(a => a.name).join(' / ');
+                    // 获取封面URL
+                    let trackCoverUrl = track.al?.picUrl;
+                    if (trackCoverUrl && !trackCoverUrl.startsWith('http')) {
+                        trackCoverUrl = 'https://p2.music.126.net/' + trackCoverUrl;
+                    }
+                    if (!trackCoverUrl) {
+                        trackCoverUrl = 'https://p2.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
+                    }
+                    return `
+                        <li class="song-item" data-song-id="${track.id}">
+                            <img class="song-cover" src="${trackCoverUrl}" alt="${track.name}">
+                            <div class="song-info">
+                                <div class="song-name">${index + 1}. ${track.name}</div>
+                                <div class="song-artist">歌手: ${artists}</div>
+                                <div class="song-album">专辑: ${track.al?.name || '未知'}</div>
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+
+                playlistModalContent.innerHTML = `
+                    <div style="margin-bottom: 20px; text-align: center;">
+                        <img src="${pl.coverImgUrl}" style="width: 150px; height: 150px; border-radius: 10px; margin-bottom: 10px;">
+                        <p style="color: #ccc; font-size: 0.9rem;">${escapeHtml(pl.description || '')}</p>
+                    </div>
+                    <ul class="song-list">${tracksHtml}</ul>
+                `;
+
+                playlistModalContent.querySelectorAll('.song-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const songId = item.dataset.songId;
+                        const songName = item.querySelector('.song-name').textContent.replace(/^\d+\.\s*/, '');
+                        const artistName = item.querySelector('.song-artist').textContent.replace('歌手: ', '');
+                        const coverImg = item.querySelector('.song-cover')?.src;
+                        playSong(songId, songName, artistName, coverImg);
+                    });
+                });
+            }
+        } catch (error) {
+            playlistModalContent.innerHTML = '<div class="lyric-empty">加载失败：' + error.message + '</div>';
+        }
+    }
+
+    playlistModalClose.addEventListener('click', () => playlistModal.classList.remove('show'));
+    playlistModal.addEventListener('click', (e) => {
+        if (e.target === playlistModal) playlistModal.classList.remove('show');
+    });
+
+    // ==================== 排行榜功能 ====================
+    async function loadToplists() {
+        if (toplistGrid.children.length > 0) return;
+
+        toplistGrid.innerHTML = '<div class="lyric-loading" style="grid-column: 1/-1;">正在加载排行榜...</div>';
+
+        try {
+            const response = await fetch('http://156.225.18.78:3000/toplist');
+            const data = await response.json();
+
+            if (data.code === 200 && data.list) {
+                renderToplists(data.list);
+            }
+        } catch (error) {
+            toplistGrid.innerHTML = '<div class="lyric-empty" style="grid-column: 1/-1;">加载失败</div>';
+        }
+    }
+
+    function renderToplists(toplists) {
+        toplistGrid.innerHTML = toplists.map(list => `
+            <div class="toplist-card" data-id="${list.id}">
+                <div class="toplist-header">
+                    <img class="toplist-cover" src="${list.coverImgUrl}" alt="${list.name}">
+                    <div class="toplist-meta">
+                        <div class="toplist-name">${escapeHtml(list.name)}</div>
+                        <div class="toplist-update">${list.updateFrequency || ''}</div>
+                    </div>
+                </div>
+                <ol class="toplist-tracks">
+                    ${(list.tracks || []).slice(0, 5).map(t => `<li>${escapeHtml(t.first)} - ${escapeHtml(t.second)}</li>`).join('')}
+                </ol>
+            </div>
+        `).join('');
+
+        toplistGrid.querySelectorAll('.toplist-card').forEach(card => {
+            card.addEventListener('click', () => showPlaylistDetail(card.dataset.id));
+        });
+    }
+
+    // ==================== 每日推荐功能 ====================
+    document.querySelectorAll('[data-recommend]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-recommend]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentRecommendType = btn.dataset.recommend;
+
+            if (currentRecommendType === 'songs') loadRecommendSongs();
+            else if (currentRecommendType === 'resource') loadRecommendResource();
+            else if (currentRecommendType === 'fm') loadPersonalFM();
+        });
+    });
+
+    async function loadRecommendSongs() {
+        recommendSongsList.innerHTML = '<div class="lyric-loading">正在加载推荐...</div>';
+
+        try {
+            const response = await fetch('http://156.225.18.78:3000/recommend/songs');
+            const data = await response.json();
+
+            if (data.code === 200 && data.data?.dailySongs) {
+                renderRecommendSongs(data.data.dailySongs);
+            }
+        } catch (error) {
+            recommendSongsList.innerHTML = '<div class="lyric-empty">加载失败</div>';
+        }
+    }
+
+    function renderRecommendSongs(songs) {
+        recommendSongsList.innerHTML = songs.map(song => {
+            const artists = song.artists.map(a => a.name).join(' / ');
+            // 获取封面URL
+            let coverUrl = song.album?.picUrl || song.al?.picUrl;
+            if (coverUrl && !coverUrl.startsWith('http')) {
+                coverUrl = 'https://p2.music.126.net/' + coverUrl;
+            }
+            if (!coverUrl) {
+                coverUrl = 'https://p2.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg';
+            }
+            return `
+                <li class="song-item" data-song-id="${song.id}">
+                    <img class="song-cover" src="${coverUrl}" alt="${song.name}">
+                    <div class="song-info">
+                        <div class="song-name">${song.name}</div>
+                        <div class="song-artist">歌手: ${artists}</div>
+                        <div class="song-album">专辑: ${song.album?.name || song.al?.name || '未知'}</div>
+                    </div>
+                </li>
+            `;
+        }).join('');
+
+        recommendSongsList.querySelectorAll('.song-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const songId = item.dataset.songId;
+                const songName = item.querySelector('.song-name').textContent;
+                const artistName = item.querySelector('.song-artist').textContent.replace('歌手: ', '');
+                const coverImg = item.querySelector('.song-cover')?.src;
+                playSong(songId, songName, artistName, coverImg);
+            });
+        });
+    }
+
+    async function loadRecommendResource() {
+        recommendSongsList.innerHTML = '<div class="lyric-loading">正在加载推荐歌单...</div>';
+
+        try {
+            const response = await fetch('http://156.225.18.78:3000/recommend/resource');
+            const data = await response.json();
+
+            if (data.code === 200 && data.recommend) {
+                recommendSongsList.innerHTML = `<div class="playlist-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px;">
+                    ${data.recommend.map(pl => `
+                        <div class="playlist-card" data-id="${pl.id}">
+                            <img class="playlist-cover" src="${pl.picUrl}" alt="${escapeHtml(pl.name)}">
+                            <div class="playlist-info">
+                                <div class="playlist-name">${escapeHtml(pl.name)}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+
+                recommendSongsList.querySelectorAll('.playlist-card').forEach(card => {
+                    card.addEventListener('click', () => showPlaylistDetail(card.dataset.id));
+                });
+            }
+        } catch (error) {
+            recommendSongsList.innerHTML = '<div class="lyric-empty">加载失败</div>';
+        }
+    }
+
+    async function loadPersonalFM() {
+        recommendSongsList.innerHTML = '<div class="lyric-loading">正在加载私人FM...</div>';
+
+        try {
+            const response = await fetch('http://156.225.18.78:3000/personal_fm');
+            const data = await response.json();
+
+            if (data.code === 200 && data.data) {
+                renderRecommendSongs(data.data);
+            }
+        } catch (error) {
+            recommendSongsList.innerHTML = '<div class="lyric-empty">加载失败</div>';
+        }
+    }
+
+    // ==================== MV功能 ====================
+    async function loadMVs() {
+        if (mvGrid.children.length > 0) return;
+
+        mvGrid.innerHTML = '<div class="lyric-loading" style="grid-column: 1/-1;">正在加载MV...</div>';
+
+        try {
+            const area = mvArea.value;
+            const order = mvOrder.value;
+            let url = 'http://156.225.18.78:3000/mv/all?limit=30';
+            if (area) url += `&area=${encodeURIComponent(area)}`;
+            if (order) url += `&order=${encodeURIComponent(order)}`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.code === 200 && data.data) {
+                renderMVs(data.data);
+            }
+        } catch (error) {
+            mvGrid.innerHTML = '<div class="lyric-empty" style="grid-column: 1/-1;">加载失败</div>';
+        }
+    }
+
+    function renderMVs(mvs) {
+        mvGrid.innerHTML = mvs.map(mv => `
+            <div class="mv-card" data-id="${mv.id}">
+                <div style="position: relative;">
+                    <img class="mv-cover" src="${mv.cover}" alt="${mv.name}">
+                    <span class="mv-duration">${formatDuration(mv.duration)}</span>
+                </div>
+                <div class="mv-info">
+                    <div class="mv-name">${escapeHtml(mv.name)}</div>
+                    <div class="mv-artist">${escapeHtml(mv.artistName)}</div>
+                    <div class="mv-play-count">播放: ${formatPlayCount(mv.playCount)}</div>
+                </div>
+            </div>
+        `).join('');
+
+        mvGrid.querySelectorAll('.mv-card').forEach(card => {
+            card.addEventListener('click', () => playMV(card.dataset.id));
+        });
+    }
+
+    function formatPlayCount(count) {
+        if (count >= 100000000) return (count / 100000000).toFixed(1) + '亿';
+        if (count >= 10000) return (count / 10000).toFixed(1) + '万';
+        return count;
+    }
+
+    async function playMV(mvid) {
+        mvModal.classList.add('show');
+        mvContent.innerHTML = '<div class="lyric-loading">正在加载MV...</div>';
+
+        try {
+            const [detailRes, urlRes] = await Promise.all([
+                fetch(`http://156.225.18.78:3000/mv/detail?mvid=${mvid}`),
+                fetch(`http://156.225.18.78:3000/mv/url?id=${mvid}&r=1080`)
+            ]);
+
+            const detailData = await detailRes.json();
+            const urlData = await urlRes.json();
+
+            if (detailData.code === 200 && detailData.data) {
+                mvTitle.textContent = detailData.data.name || 'MV播放';
+            }
+
+            if (urlData.code === 200 && urlData.data?.url) {
+                mvContent.innerHTML = `<video controls autoplay style="width: 100%; max-height: 70vh;">
+                    <source src="${urlData.data.url}" type="video/mp4">
+                </video>`;
+            } else {
+                mvContent.innerHTML = '<div class="lyric-empty">无法播放此MV</div>';
+            }
+        } catch (error) {
+            mvContent.innerHTML = '<div class="lyric-empty">加载失败</div>';
+        }
+    }
+
+    mvClose.addEventListener('click', () => {
+        mvModal.classList.remove('show');
+        mvContent.innerHTML = '';
+    });
+    mvModal.addEventListener('click', (e) => {
+        if (e.target === mvModal) {
+            mvModal.classList.remove('show');
+            mvContent.innerHTML = '';
+        }
+    });
+
+    mvArea.addEventListener('change', loadMVs);
+    mvOrder.addEventListener('change', loadMVs);
+
+    // ==================== 歌手榜功能 ====================
+    async function loadArtistRanks() {
+        if (artistRankList.children.length > 0) return;
+
+        artistRankList.innerHTML = '<div class="lyric-loading">正在加载歌手榜...</div>';
+
+        try {
+            const response = await fetch('http://156.225.18.78:3000/top/artists?limit=50');
+            const data = await response.json();
+
+            if (data.code === 200 && data.artists) {
+                renderArtistRanks(data.artists);
+            }
+        } catch (error) {
+            artistRankList.innerHTML = '<div class="lyric-empty">加载失败</div>';
+        }
+    }
+
+    function renderArtistRanks(artists) {
+        artistRankList.innerHTML = artists.map((artist, index) => `
+            <div class="artist-rank-item" data-id="${artist.id}">
+                <div class="artist-rank">${index + 1}</div>
+                <img class="artist-avatar" src="${artist.picUrl}" alt="${artist.name}">
+                <div class="artist-info">
+                    <div class="artist-name">${escapeHtml(artist.name)}</div>
+                    <div class="artist-score">热度: ${artist.score || 0}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    searchBtn.addEventListener('click', searchSongs);
+    searchInput.addEventListener('keypress', e => e.key === 'Enter' && searchSongs());
+
+    document.addEventListener('DOMContentLoaded', () => {
+        currentSongInfo.textContent = '请搜索并选择歌曲播放';
+        audioPlayer.addEventListener('error', () => {
+            alert('音频播放出错，高级音质文件较大，可切换为标准/极高音质重试');
+            currentSongId = null;
+        });
+    });
+</script>
+</body>
+</html>

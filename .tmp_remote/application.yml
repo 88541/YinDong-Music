@@ -1,0 +1,91 @@
+server:
+  port: 56669
+
+# ========== 数据库 (SQLite WAL) ==========
+spring:
+  datasource:
+    url: jdbc:sqlite:verification.db
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 20
+
+# ========== 密钥 (与 Pro 版文档十四章一致) ==========
+app:
+  sign-key: "${SIGN_KEY}"
+  aes-key: "${AES_KEY}"
+  secret-key: "${SECRET_KEY}"
+
+# ========== 多APP配置 ==========
+  apps:
+    cloudmusic_pro:
+      name: "云音乐Pro"
+      key: "${APP_KEY_CLOUDMUSIC_PRO}"
+      latest-version: "1.0.0"
+      min-version: "1.0.0"
+      update-url: ""
+      force-update: false
+      app-enabled: true
+      announcement: ""
+    cloud_music:
+      name: "云音乐"
+      key: "${APP_KEY_CLOUD_MUSIC}"
+      latest-version: "2.3.6"
+      min-version: "1.0.0"
+      update-url: "https://106.53.19.128/cloud_music_v2.3.6.apk"
+      force-update: false
+      app-enabled: true
+      announcement: "欢迎使用本应用!"
+
+# ========== 验证 ==========
+  token-expire-seconds: 300
+  heartbeat-interval: 120
+  max-device-sessions: 3
+  allowed-packages:
+    - "com.example.myapp"
+
+# ========== 管理员 ==========
+  admin-username: "${ADMIN_USER}"
+  admin-password: "${ADMIN_PASS}"
+  admin-allowed-ips: "${ADMIN_ALLOWED_IPS}"
+
+# ========== 安全 ==========
+  rate-limit-per-minute: 30
+  device-rate-limit-per-hour: 200
+  music-rate-limit-per-minute: 20
+  max-device-ips-per-hour: 5
+  sign-timestamp-tolerance: 300
+  music-sign-timestamp-tolerance: 60
+  nonce-expire-seconds: 120
+  challenge-required: true
+  challenge-expire-seconds: 30
+  challenge-session-expire-seconds: 300
+  challenge-timestamp-tolerance-seconds: 120
+  challenge-bind-ip: true
+  challenge-require-req-signature: false
+  blocked-user-agents: "python-requests,curl,wget,scrapy,httpie,postman"
+  # 可信代理IP (只有这些IP转发的请求才读 X-Forwarded-For)
+  trusted-proxy-ips:
+    - "127.0.0.1"
+    - "::1"
+
+# ========== 外部音乐API ==========
+  external-api-host: "${EXTERNAL_API_HOST:https://music.haitangw.cc}"
+  qishui-api-url: "https://api-v2.yuafeng.cn/API/dyjx.php"
+  qishui-api-key: "${QISHUI_API_KEY}"
+  yunzhi-host: "https://yunzhiapi.cn"
+  yunzhi-token: ""
+  qq-music-cookie: "${QQ_MUSIC_COOKIE:}"
+
+# ========== 赞助 ==========
+  sponsor-key: "${SPONSOR_KEY}"
+
+# ========== 插件 ==========
+  plugin-token-ttl-days: 7
+  builtin-plugin-enabled: true

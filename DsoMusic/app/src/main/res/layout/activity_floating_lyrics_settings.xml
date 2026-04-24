@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPageBackground">
+
+    <com.dirror.music.widget.TitleBarLayout
+        android:id="@+id/titleBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:text="悬浮歌词设置"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleBarLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 预览区域 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="预览"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:id="@+id/previewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:background="#80000000">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvPreviewCurrent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="当前歌词"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvPreviewNext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="下一句歌词"
+                        android:textColor="#80FFFFFF"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <!-- 文字大小 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="文字大小"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="A-"
+                    android:textColor="@color/colorSubTextForeground"
+                    android:textSize="14sp" />
+
+                <SeekBar
+                    android:id="@+id/seekBarTextSize"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="30"
+                    android:progress="18" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="A+"
+                    android:textColor="@color/colorSubTextForeground"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <!-- 背景透明度 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="背景透明度"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="透明"
+                    android:textColor="@color/colorSubTextForeground"
+                    android:textSize="14sp" />
+
+                <SeekBar
+                    android:id="@+id/seekBarAlpha"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="255"
+                    android:progress="128" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="不透明"
+                    android:textColor="@color/colorSubTextForeground"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- 文字颜色 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="文字颜色"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupTextColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbWhite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="白色" />
+
+                <RadioButton
+                    android:id="@+id/rbGreen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="绿色" />
+
+                <RadioButton
+                    android:id="@+id/rbCyan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="青色" />
+
+                <RadioButton
+                    android:id="@+id/rbYellow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="黄色" />
+
+            </RadioGroup>
+
+            <!-- 显示下一句 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="显示下一句歌词"
+                    android:textColor="@color/colorTextForeground"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <Switch
+                    android:id="@+id/switchShowNextLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true" />
+
+            </LinearLayout>
+
+            <!-- 窗口宽度 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="窗口宽度"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="窄"
+                    android:textColor="@color/colorSubTextForeground"
+                    android:textSize="14sp" />
+
+                <SeekBar
+                    android:id="@+id/seekBarWidth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="800"
+                    android:progress="400" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="宽"
+                    android:textColor="@color/colorSubTextForeground"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- 窗口高度 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="窗口高度"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="矮"
+                    android:textColor="@color/colorSubTextForeground"
+                    android:textSize="14sp" />
+
+                <SeekBar
+                    android:id="@+id/seekBarHeight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="300"
+                    android:progress="100" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="高"
+                    android:textColor="@color/colorSubTextForeground"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- 自定义提示文字 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="自定义提示文字"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etCustomText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="请输入无歌词时的提示文字"
+                android:textColor="@color/colorTextForeground"
+                android:textColorHint="@color/colorSubTextForeground"
+                android:background="@drawable/edit_text_background"
+                android:padding="12dp"
+                android:textSize="14sp" />
+
+            <!-- 重置按钮 -->
+            <Button
+                android:id="@+id/btnReset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="恢复默认设置"
+                android:textColor="@color/colorTextForeground" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

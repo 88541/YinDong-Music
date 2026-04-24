@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+API_KEY_FROM_CLIENT="${1:-}"
+SECRETS_FILE="/opt/cloudmusic/.secrets.env"
+BACKUP_DIR="/opt/cloudmusic/backup"
+
+gen() {
+  tr -dc "A-Za-z0-9" </dev/urandom | head -c "${1}"
+}
+
+extract_key() {
+  local key="$1"
+  if [ ! -f "${SECRETS_FILE}" ]; then
+    return 0
+  fi
+  grep -E "^${key}=" "${SECRETS_FILE}" | tail -n 1 | sed "s/^[^=]*=//"
+}
+
+mkdir -p "${BACKUP_DIR}"
+if [ -f "${SECRETS_FILE}" ]; then
+  cp "${SECRETS_FILE}" "${BACKUP_DIR}/.secrets.env.$(date +%Y%m%d_%H%M%S).bak"
+fi
+
+APP_KEY_CLOUD_MUSIC="${API_KEY_FROM_CLIENT}"
+if [ -z "${APP_KEY_CLOUD_MUSIC}" ]; then
+  APP_KEY_CLOUD_MUSIC="$(extract_key "APP_KEY_CLOUD_MUSIC")"
+fi
+if [ -z "${APP_KEY_CLOUD_MUSIC}" ]; then
+  APP_KEY_CLOUD_MUSIC="$(gen 51)"
+fi
+
+SIGN_KEY="$(gen 40)"
+AES_KEY="$(gen 32)"
+SECRET_KEY="$(gen 40)"
+SPONSOR_KEY="$(gen 40)"
+ADMIN_USER="cloudadmin"
+ADMIN_PASS="Aa1_$(gen 20)"
+ADMIN_ALLOWED_IPS="127.0.0.1,::1,106.53.19.128"
+APP_KEY_CLOUDMUSIC_PRO="${APP_KEY_CLOUD_MUSIC}"
+OFFICIAL_GROUP_QQ="2954600897"
+OFFICIAL_AUTHOR_QQ="2954600897"
+OFFICIAL_JOIN_URL="https://qm.qq.com/q/yGo6tMFWZW"
+FORCE_SHOW_OFFICIAL_CONTACT="false"
+
+TMP_FILE="$(mktemp)"
+cat > "${TMP_FILE}" <<EOF
+SIGN_KEY=${SIGN_KEY}
+AES_KEY=${AES_KEY}
+SECRET_KEY=${SECRET_KEY}
+SPONSOR_KEY=${SPONSOR_KEY}
+ADMIN_USER=${ADMIN_USER}
+ADMIN_PASS=${ADMIN_PASS}
+ADMIN_ALLOWED_IPS=${ADMIN_ALLOWED_IPS}
+APP_KEY_CLOUD_MUSIC=${APP_KEY_CLOUD_MUSIC}
+APP_KEY_CLOUDMUSIC_PRO=${APP_KEY_CLOUDMUSIC_PRO}
+OFFICIAL_GROUP_QQ=${OFFICIAL_GROUP_QQ}
+OFFICIAL_AUTHOR_QQ=${OFFICIAL_AUTHOR_QQ}
+OFFICIAL_JOIN_URL=${OFFICIAL_JOIN_URL}
+FORCE_SHOW_OFFICIAL_CONTACT=${FORCE_SHOW_OFFICIAL_CONTACT}
+EOF
+
+chmod 600 "${TMP_FILE}"
+mv "${TMP_FILE}" "${SECRETS_FILE}"
+
+for K in SIGN_KEY AES_KEY SECRET_KEY SPONSOR_KEY ADMIN_USER ADMIN_PASS ADMIN_ALLOWED_IPS APP_KEY_CLOUD_MUSIC APP_KEY_CLOUDMUSIC_PRO OFFICIAL_GROUP_QQ OFFICIAL_AUTHOR_QQ OFFICIAL_JOIN_URL FORCE_SHOW_OFFICIAL_CONTACT; do
+  V="$(extract_key "${K}")"
+  if [ -n "${V}" ]; then
+    echo "${K}:set,len=${#V}"
+  else
+    echo "${K}:missing,len=0"
+  fi
+done

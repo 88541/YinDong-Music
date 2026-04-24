@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.MVListActivity">
+
+    <com.dirror.music.widget.TitleBarLayout
+        android:id="@+id/titleBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:text="MV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 筛选栏 -->
+    <LinearLayout
+        android:id="@+id/filterLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="@color/colorPageBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleBarLayout">
+
+        <Spinner
+            android:id="@+id/spinnerArea"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/spinner_background" />
+
+        <Spinner
+            android:id="@+id/spinnerOrder"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/spinner_background" />
+    </LinearLayout>
+
+    <!-- 搜索栏 -->
+    <LinearLayout
+        android:id="@+id/searchLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterLayout">
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:hint="搜索MV..."
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:background="@drawable/edit_text_background"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1" />
+
+        <ImageButton
+            android:id="@+id/btnSearch"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_search"
+            android:contentDescription="搜索" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMVList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="52dp"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="@+id/miniPlayer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchLayout" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/rvMVList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/rvMVList" />
+
+    <include
+        android:id="@+id/miniPlayer"
+        layout="@layout/mini_player"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

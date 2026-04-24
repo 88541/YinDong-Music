@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- MV封面区域 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivMVCover"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_foreground" />
+
+            <!-- 播放按钮 -->
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play"
+                android:alpha="0.8" />
+
+            <!-- 时长 -->
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="8dp"
+                android:background="#80000000"
+                android:paddingLeft="8dp"
+                android:paddingTop="4dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="4dp"
+                android:text="00:00"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+            <!-- 播放量 -->
+            <TextView
+                android:id="@+id/tvPlayCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="8dp"
+                android:background="#80000000"
+                android:paddingLeft="8dp"
+                android:paddingTop="4dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="4dp"
+                android:text="0"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+        </FrameLayout>
+
+        <!-- MV信息 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/tvMVName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="MV名称"
+                android:textColor="@color/colorTextForeground"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvArtistName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="歌手名称"
+                android:textColor="@color/colorSubTextForeground"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvPublishTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="发布时间"
+                android:textColor="@color/colorSubTextForeground"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

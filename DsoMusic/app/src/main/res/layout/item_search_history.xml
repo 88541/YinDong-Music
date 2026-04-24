@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="?attr/selectableItemBackground"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <ImageView
+        android:id="@+id/ivHistoryIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_baseline_history_24"
+        android:alpha="0.5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/colorTextForeground" />
+
+    <TextView
+        android:id="@+id/tvHistory"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/colorTextForeground"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ivDelete"
+        app:layout_constraintStart_toEndOf="@+id/ivHistoryIcon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivDelete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:src="@drawable/ic_baseline_close_24"
+        android:alpha="0.5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/colorTextForeground" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
