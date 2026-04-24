@@ -8,7 +8,7 @@
 
 ## 📱 应用截图
 
-![播放器界面](C:\Users\WJH\Downloads\Collage_20260424_194122.jpg)
+![播放器界面](http://yindong.zh2026.cn/jt.jpg)
 *精美的圆形封面 + 环形频谱可视化效果*
 
 ## ✨ 功能特性
